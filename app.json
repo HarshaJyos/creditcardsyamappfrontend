@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "credit-card-app",
-    "slug": "credit-card-app",
+    "name": "creditcard-app",
+    "slug": "creditcard-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -13,7 +13,9 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.syam.creditcard",
+      "googleServicesFile": "./GoogleService-Info.plist"
     },
     "android": {
       "adaptiveIcon": {
@@ -21,10 +23,26 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.syam.creditcard",
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      "@react-native-firebase/app",
+      "@react-native-firebase/auth",
+      "@react-native-firebase/messaging",
+      [
+        "@react-native-google-signin/google-signin",
+        {
+          "webClientId": "599757311255-uct94hit35oh1qdeua3q6eblecodeog5.apps.googleusercontent.com",
+          "iosUrlScheme": "com.googleusercontent.apps.599757311255-uct94hit35oh1qdeua3q6eblecodeog5"
+        }
+      ],
+      "expo-notifications",
+      "expo-secure-store"
+    ]
   }
 }
