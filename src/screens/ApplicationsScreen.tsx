@@ -6,13 +6,14 @@ import ErrorMessage from "../components/ErrorMessage";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { RootState, AppDispatch } from "../store";
 import { IApplication } from "../../shared/types";
+import { useAuth } from "../context/AuthContext"; // Added
 
 const ApplicationsScreen = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { applications, loading, error } = useSelector(
     (state: RootState) => state.applications
   );
-  const { user } = useSelector((state: RootState) => state.user);
+  const { user } = useAuth(); // Fixed: Use context
 
   useEffect(() => {
     if (user && user._id) dispatch(fetchApplications(user._id.toString()));

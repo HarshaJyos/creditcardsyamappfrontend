@@ -1,9 +1,9 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import auth from "@react-native-firebase/auth";
-import { GoogleSignin } from "@react-native-google-signin/google-signin";
+import { GoogleSignin, User } from "@react-native-google-signin/google-signin";
 import * as SecureStore from "expo-secure-store";
 import api from "../api/api";
-import { ICustomer } from "../../../shared/types";
+import { ICustomer } from "../../shared/types";
 
 interface AuthContextType {
   user: ICustomer | null;
@@ -17,9 +17,20 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   googleLogin: () => Promise<void>;
   logout: () => Promise<void>;
+  setUser: (user: ICustomer | null) => void;
+  error: string | null;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext<AuthContextType | undefined>({
+  user: null,
+  loading: false,
+  error: null,
+  signUp: async () => {},
+  login: async () => {},
+  googleLogin: async () => {},
+  logout: async () => {},
+  setUser: () => {},
+});
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
@@ -31,7 +42,13 @@ export const useAuth = () => {
 const AuthContextProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [user, setUser] = useState<ICustomer | null>(null);
+  const [error, setError] = React.useState<string | null>(null);
+  const [user, setUserState] = useState<ICustomer | null>(null);
+
+  // Set user state with ICustomer or null
+  const setUser = (user: ICustomer | null) => {
+    setUserState(user);
+  };
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -39,8 +56,6 @@ const AuthContextProvider: React.FC<{ children: React.ReactNode }> = ({
     GoogleSignin.configure({
       webClientId:
         "599757311255-uct94hit35oh1qdeua3q6eblecodeog5.apps.googleusercontent.com",
-      iosUrlScheme:
-        "com.googleusercontent.apps.599757311255-uct94hit35oh1qdeua3q6eblecodeog5",
     });
 
     const unsubscribe = auth().onAuthStateChanged(async (firebaseUser) => {
@@ -108,16 +123,14 @@ const AuthContextProvider: React.FC<{ children: React.ReactNode }> = ({
     try {
       await GoogleSignin.hasPlayServices();
       const userInfo = await GoogleSignin.signIn();
-      // Log response for debugging
       console.log(
         "Google Sign-In response:",
         JSON.stringify(userInfo, null, 2)
       );
-      // Safely access idToken with fallback for older versions
       const idToken =
         (userInfo as any).idToken ||
         (userInfo as any).data?.idToken ||
-        (userInfo as any).user?.idToken;
+        (userInfo as any).user?.idToken; // Get idToken from userInfo.user.idToken
       if (!idToken) {
         throw new Error("No ID token received from Google Sign-In");
       }
@@ -140,21 +153,29 @@ const AuthContextProvider: React.FC<{ children: React.ReactNode }> = ({
       throw new Error(error.message || "Google Sign-In failed");
     }
   };
-
   const logout = async () => {
     try {
-      await GoogleSignin.signOut();
       await auth().signOut();
-      setUser(null);
       await SecureStore.deleteItemAsync("authToken");
+      setUser(null);
     } catch (error: any) {
+      console.error("Logout error:", error.message);
       throw new Error(error.message || "Logout failed");
     }
   };
 
   return (
     <AuthContext.Provider
-      value={{ user, loading, signUp, login, googleLogin, logout }}
+      value={{
+        user,
+        loading,
+        error,
+        signUp,
+        login,
+        googleLogin,
+        setUser,
+        logout,
+      }}
     >
       {children}
     </AuthContext.Provider>

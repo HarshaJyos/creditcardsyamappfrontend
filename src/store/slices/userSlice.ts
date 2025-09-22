@@ -2,13 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../../api/api";
 import { ICustomer, ISurvey } from "../../../shared/types";
 
-export const fetchUser = createAsyncThunk(
-  "user/fetchUser",
-  async (userId: string) => {
-    const response = await api.get(`/users/${userId}`);
-    return response.data;
-  }
-);
+// Removed unused fetchUser
 
 export const updateUser = createAsyncThunk(
   "user/updateUser",
@@ -36,17 +30,6 @@ const userSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchUser.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(fetchUser.fulfilled, (state, action) => {
-        state.loading = false;
-        state.user = action.payload;
-      })
-      .addCase(fetchUser.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.error.message || "Failed to fetch user";
-      })
       .addCase(updateUser.pending, (state) => {
         state.loading = true;
       })

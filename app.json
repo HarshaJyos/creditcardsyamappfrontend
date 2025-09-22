@@ -38,7 +38,7 @@
         "@react-native-google-signin/google-signin",
         {
           "webClientId": "599757311255-uct94hit35oh1qdeua3q6eblecodeog5.apps.googleusercontent.com",
-          "iosUrlScheme": "com.googleusercontent.apps.599757311255-uct94hit35oh1qdeua3q6eblecodeog5"
+          "iosUrlScheme": "com.googleusercontent.apps.599757311255-vm4obp10agjef6u8m7vsi9gfe3qkfev5"
         }
       ],
       "expo-notifications",

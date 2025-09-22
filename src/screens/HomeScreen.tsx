@@ -8,6 +8,7 @@ import LoadingSpinner from "../components/LoadingSpinner";
 import { AppDispatch, RootState } from "../store";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
+import { useAuth } from "../context/AuthContext"; // Added
 
 type RootStackParamList = {
   CardsList: undefined;
@@ -20,7 +21,7 @@ const HomeScreen = () => {
   const { recommendations, loading, error } = useSelector(
     (state: RootState) => state.recommendations
   );
-  const { user } = useSelector((state: RootState) => state.user);
+  const { user } = useAuth(); // Fixed: Use context
 
   useEffect(() => {
     if (user && user._id) {

@@ -6,13 +6,14 @@ import NotificationItem from "../components/NotificationItem";
 import ErrorMessage from "../components/ErrorMessage";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { AppDispatch, RootState } from "../store";
+import { useAuth } from "../context/AuthContext"; // Added
 
 const NotificationsScreen = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { notifications, loading, error } = useSelector(
     (state: RootState) => state.notifications
   );
-  const { user } = useSelector((state: RootState) => state.user);
+  const { user } = useAuth(); // Fixed: Use context
 
   useEffect(() => {
     if (user && user._id) dispatch(fetchNotifications(user._id.toString()));

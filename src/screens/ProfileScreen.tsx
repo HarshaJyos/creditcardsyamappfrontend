@@ -17,26 +17,30 @@ const validationSchema = Yup.object().shape({
 
 const ProfileScreen = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { logout } = useAuth();
-  const { user, loading, error } = useSelector(
+  const { logout, user: contextUser, setUser } = useAuth(); // Fixed: Use context, add setUser (expose it in context if not)
+  const { loading, error } = useSelector(
+    // Keep slice for loading/error
     (state: RootState) => state.user
   );
   const [updateError, setUpdateError] = React.useState<string | null>(null);
 
   const formik = useFormik({
     initialValues: {
-      firstName: user?.firstName || "",
-      lastName: user?.lastName || "",
+      firstName: contextUser?.firstName || "",
+      lastName: contextUser?.lastName || "",
     },
     validationSchema,
     enableReinitialize: true,
     onSubmit: async (values) => {
       try {
         setUpdateError(null);
-        if (user && user._id) {
-          await dispatch(
-            updateUser({ userId: user._id.toString(), data: values })
+        if (contextUser && contextUser._id) {
+          const resultAction = await dispatch(
+            updateUser({ userId: contextUser._id.toString(), data: values })
           );
+          if (updateUser.fulfilled.match(resultAction)) {
+            setUser(resultAction.payload); // Sync back to context
+          }
         } else {
           setUpdateError("User ID is missing");
         }
@@ -48,12 +52,12 @@ const ProfileScreen = () => {
 
   if (loading) return <LoadingSpinner />;
   if (error) return <ErrorMessage message={error} />;
-  if (!user) return <ErrorMessage message="User not found" />;
+  if (!contextUser) return <ErrorMessage message="User not found" />;
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Profile</Text>
-      <Text style={styles.info}>Email: {user.email}</Text>
+      <Text style={styles.info}>Email: {contextUser.email}</Text>
       <TextInput
         label="First Name"
         value={formik.values.firstName}
@@ -91,7 +95,7 @@ const ProfileScreen = () => {
       {updateError && <ErrorMessage message={updateError} />}
       <Button
         mode="contained"
-        onPress={() => formik.handleSubmit}
+        onPress={() => formik.handleSubmit()}
         style={styles.button}
       >
         Update Profile

@@ -32,7 +32,7 @@ const validationSchema = Yup.object().shape({
 
 const SurveyScreen = ({ navigation }: any) => {
   const dispatch = useDispatch<AppDispatch>();
-  const { user } = useAuth();
+  const { user, setUser } = useAuth(); // Added setUser (expose in context if not)
   const [error, setError] = React.useState<string | null>(null);
 
   const formik = useFormik({
@@ -54,9 +54,12 @@ const SurveyScreen = ({ navigation }: any) => {
       try {
         setError(null);
         if (user && user._id) {
-          await dispatch(
+          const resultAction = await dispatch(
             submitSurvey({ userId: user._id.toString(), survey: values })
           );
+          if (submitSurvey.fulfilled.match(resultAction)) {
+            setUser(resultAction.payload); // Sync back to context
+          }
           navigation.navigate("Home");
         } else {
           setError("User information is missing. Please log in again.");
@@ -176,7 +179,7 @@ const SurveyScreen = ({ navigation }: any) => {
       {error && <ErrorMessage message={error} />}
       <Button
         mode="contained"
-        onPress={() => formik.handleSubmit}
+        onPress={() => formik.handleSubmit()}
         style={styles.button}
       >
         Submit Survey

@@ -18,7 +18,7 @@
           "client_type": 1,
           "android_info": {
             "package_name": "com.syam.creditcard",
-            "certificate_hash": "0000000000000000000000000000000000000000"
+            "certificate_hash": "00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00"
           }
         },
         {
@@ -28,7 +28,7 @@
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDBvVyEfKX7m3iecxYoTZT-11G8UFp0LT0"
+          "current_key": "AIzaSyCtCPfC2bnLU0lORzI2DAWsU2GYbBy9Cdw"
         }
       ],
       "services": {

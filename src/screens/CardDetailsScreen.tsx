@@ -14,6 +14,7 @@ type RootStackParamList = {
   CardDetails: { cardId: string };
   Applications: undefined;
   Compare: { card1: string; card2: string | null };
+  Main: undefined; // Added for nested nav
 };
 
 const CardDetailsScreen = ({ route }: any) => {
@@ -51,7 +52,7 @@ const CardDetailsScreen = ({ route }: any) => {
         onPress={() => {
           if (user && user._id) {
             dispatch(applyForCard({ userId: user._id.toString(), cardId }));
-            navigation.navigate("Applications");
+            navigation.navigate("Main"); // Navigate to Main without params
           }
         }}
         style={styles.button}
